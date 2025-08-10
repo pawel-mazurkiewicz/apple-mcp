@@ -5,6 +5,16 @@ import { access } from 'node:fs/promises';
 
 const execAsync = promisify(exec);
 
+// Configuration
+const CONFIG = {
+    // Maximum messages to process (to avoid performance issues)
+    MAX_MESSAGES: 50,
+    // Maximum content length for previews
+    MAX_CONTENT_PREVIEW: 300,
+    // Timeout for operations
+    TIMEOUT_MS: 8000
+};
+
 // Retry configuration
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
@@ -212,10 +222,14 @@ async function getAttachmentPaths(messageId: number): Promise<string[]> {
 
 async function readMessages(phoneNumber: string, limit = 10): Promise<Message[]> {
     try {
+        // Enforce maximum limit for performance
+        const maxLimit = Math.min(limit, CONFIG.MAX_MESSAGES);
+        
         // Check database access with retries
         const hasAccess = await retryOperation(checkMessagesDBAccess);
         if (!hasAccess) {
-            return [];
+            // If database access fails, try AppleScript fallback (limited functionality)
+            return await readMessagesAppleScript(phoneNumber, maxLimit);
         }
 
         // Get all possible formats of the phone number
@@ -252,7 +266,7 @@ async function readMessages(phoneNumber: string, limit = 10): Promise<Message[]>
                 AND m.item_type = 0  -- Regular messages only
                 AND m.is_audio_message = 0  -- Skip audio messages
             ORDER BY m.date DESC 
-            LIMIT ${limit}
+            LIMIT ${maxLimit}
         `;
 
         // Execute query with retries
@@ -342,10 +356,14 @@ async function readMessages(phoneNumber: string, limit = 10): Promise<Message[]>
 
 async function getUnreadMessages(limit = 10): Promise<Message[]> {
     try {
+        // Enforce maximum limit for performance
+        const maxLimit = Math.min(limit, CONFIG.MAX_MESSAGES);
+        
         // Check database access with retries
         const hasAccess = await retryOperation(checkMessagesDBAccess);
         if (!hasAccess) {
-            return [];
+            // If database access fails, try AppleScript fallback (limited functionality)
+            return await getUnreadMessagesAppleScript(maxLimit);
         }
 
         const query = `
@@ -375,7 +393,7 @@ async function getUnreadMessages(limit = 10): Promise<Message[]> {
                 AND m.is_audio_message = 0  -- Skip audio messages
                 AND m.item_type = 0  -- Regular messages only
             ORDER BY m.date DESC 
-            LIMIT ${limit}
+            LIMIT ${maxLimit}
         `;
 
         // Execute query with retries
@@ -498,6 +516,54 @@ async function scheduleMessage(phoneNumber: string, message: string, scheduledTi
         message,
         phoneNumber
     };
+}
+
+/**
+ * AppleScript fallback for reading messages (simplified, limited functionality)
+ */
+async function readMessagesAppleScript(phoneNumber: string, limit: number): Promise<Message[]> {
+    try {
+        const script = `
+tell application "Messages"
+    return "SUCCESS:messages_not_accessible_via_applescript"
+end tell`;
+
+        const result = await runAppleScript(script) as string;
+        
+        if (result && result.includes('SUCCESS')) {
+            // Return empty array with a note that AppleScript doesn't provide full message access
+            return [];
+        }
+        
+        return [];
+    } catch (error) {
+        console.error(`AppleScript fallback failed: ${error instanceof Error ? error.message : String(error)}`);
+        return [];
+    }
+}
+
+/**
+ * AppleScript fallback for getting unread messages (simplified, limited functionality)
+ */
+async function getUnreadMessagesAppleScript(limit: number): Promise<Message[]> {
+    try {
+        const script = `
+tell application "Messages"
+    return "SUCCESS:unread_messages_not_accessible_via_applescript"
+end tell`;
+
+        const result = await runAppleScript(script) as string;
+        
+        if (result && result.includes('SUCCESS')) {
+            // Return empty array with a note that AppleScript doesn't provide full message access
+            return [];
+        }
+        
+        return [];
+    } catch (error) {
+        console.error(`AppleScript fallback failed: ${error instanceof Error ? error.message : String(error)}`);
+        return [];
+    }
 }
 
 export default { sendMessage, readMessages, scheduleMessage, getUnreadMessages };

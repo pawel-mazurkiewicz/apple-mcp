@@ -177,20 +177,6 @@ const CONTACTS_TOOL: Tool = {
     }
   };
   
-  const WEB_SEARCH_TOOL: Tool = {
-    name: "webSearch",
-    description: "Search the web using DuckDuckGo and retrieve content from search results",
-    inputSchema: {
-      type: "object",
-      properties: {
-        query: {
-          type: "string",
-          description: "Search query to look up"
-        }
-      },
-      required: ["query"]
-    }
-  };
   
 const CALENDAR_TOOL: Tool = {
   name: "calendar",
@@ -305,6 +291,6 @@ const MAPS_TOOL: Tool = {
   }
 };
 
-const tools = [CONTACTS_TOOL, NOTES_TOOL, MESSAGES_TOOL, MAIL_TOOL, REMINDERS_TOOL, WEB_SEARCH_TOOL, CALENDAR_TOOL, MAPS_TOOL];
+const tools = [CONTACTS_TOOL, NOTES_TOOL, MESSAGES_TOOL, MAIL_TOOL, REMINDERS_TOOL, CALENDAR_TOOL, MAPS_TOOL];
 
 export default tools;

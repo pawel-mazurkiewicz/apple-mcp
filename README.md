@@ -1,133 +1,134 @@
-# Apple MCP tools
+# 🍎 Apple MCP - Your Mac's Best Friend
+
+> **Plot twist:** Your Mac can do more than just look pretty. Turn your Apple apps into AI superpowers! 
 
 Love this MCP? Check out supermemory MCP too - https://mcp.supermemory.ai
 
-
 [![smithery badge](https://smithery.ai/badge/@Dhravya/apple-mcp)](https://smithery.ai/server/@Dhravya/apple-mcp)
-
-This is a collection of apple-native tools for the [MCP protocol](https://modelcontextprotocol.com/docs/mcp-protocol).
-
-Here's a step-by-step video about how to set this up, with a demo. - https://x.com/DhravyaShah/status/1892694077679763671
 
 <a href="https://glama.ai/mcp/servers/gq2qg6kxtu">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/gq2qg6kxtu/badge" alt="Apple Server MCP server" />
 </a>
 
-![image](https://github.com/user-attachments/assets/56a5ccfa-cb1a-4226-80c5-6cc794cefc34)
+## 🤯 What Can This Thing Do?
 
+**Basically everything you wish your Mac could do automatically (but never bothered to set up):**
+
+### 💬 **Messages** - Because who has time to text manually?
+- Send messages to anyone in your contacts (even that person you've been avoiding)
+- Read your messages (finally catch up on those group chats)
+- Schedule messages for later (be that organized person you pretend to be)
+
+### 📝 **Notes** - Your brain's external hard drive
+- Create notes faster than you can forget why you needed them
+- Search through that digital mess you call "organized notes"
+- Actually find that brilliant idea you wrote down 3 months ago
+
+### 👥 **Contacts** - Your personal network, digitized
+- Find anyone in your contacts without scrolling forever
+- Get phone numbers instantly (no more "hey, what's your number again?")
+- Actually use that contact database you've been building for years
+
+### 📧 **Mail** - Email like a pro (or at least pretend to)
+- Send emails with attachments, CC, BCC - the whole professional shebang
+- Search through your email chaos with surgical precision
+- Schedule emails for later (because 3 AM ideas shouldn't be sent at 3 AM)
+- Check unread counts (prepare for existential dread)
+
+### ⏰ **Reminders** - For humans with human memory
+- Create reminders with due dates (finally remember to do things)
+- Search through your reminder graveyard
+- List everything you've been putting off
+- Open specific reminders (face your procrastination)
+
+### 📅 **Calendar** - Time management for the chronically late
+- Create events faster than you can double-book yourself
+- Search for that meeting you're definitely forgetting about
+- List upcoming events (spoiler: you're probably late to something)
+- Open calendar events directly (skip the app hunting)
+
+### 🗺️ **Maps** - For people who still get lost with GPS
+- Search locations (find that coffee shop with the weird name)
+- Save favorites (bookmark your life's important spots)
+- Get directions (finally stop asking Siri while driving)
+- Create guides (be that friend who plans everything)
+- Drop pins like you're claiming territory
+
+## 🎭 The Magic of Chaining Commands
+
+Here's where it gets spicy. You can literally say:
+
+*"Read my conference notes, find contacts for the people I met, and send them a thank you message"*
+
+And it just... **works**. Like actual magic, but with more code.
+
+## 🚀 Installation (The Easy Way)
+
+### Option 1: Smithery (For the Sophisticated)
+
+```bash
+npx -y @smithery/cli@latest install @Dhravya/apple-mcp --client claude
+```
+
+For Cursor users (we see you):
+```bash
+npx -y @smithery/cli@latest install @Dhravya/apple-mcp --client cursor
+```
+
+### Option 2: Manual Setup (For the Brave)
 
 <details>
-<summary>Here's the JSON to copy</summary>
+<summary>Click if you're feeling adventurous</summary>
 
+First, get bun (if you don't have it already):
+```bash
+brew install oven-sh/bun/bun
 ```
+
+Then add this to your `claude_desktop_config.json`:
+
+```json
 {
   "mcpServers": {
     "apple-mcp": {
       "command": "bunx",
       "args": ["--no-cache", "apple-mcp@latest"]
     }
-}
-
-```
-
-</details>
-
-#### Quick install
-
-To install Apple MCP for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@Dhravya/apple-mcp):
-
-```bash
-npx -y @smithery/cli@latest install @Dhravya/apple-mcp --client claude
-```
-
-... and for cursor, you can do:
-
-```bash
-npx -y @smithery/cli@latest install @Dhravya/apple-mcp --client cursor
-```
-
-
-## Features
-
-- Messages:
-  - Send messages using the Apple Messages app
-  - Read out messages
-- Notes:
-  - List notes
-  - Search & read notes in Apple Notes app
-- Contacts:
-  - Search contacts for sending messages
-- Emails:
-  - Send emails with multiple recipients (to, cc, bcc) and file attachments
-  - Search emails with custom queries, mailbox selection, and result limits
-  - Schedule emails for future delivery
-  - List and manage scheduled emails
-  - Check unread email counts globally or per mailbox
-- Reminders:
-  - List all reminders and reminder lists
-  - Search for reminders by text
-  - Create new reminders with optional due dates and notes
-  - Open the Reminders app to view specific reminders
-- Calendar:
-  - Search calendar events with customizable date ranges
-  - List upcoming events
-  - Create new calendar events with details like title, location, and notes
-  - Open calendar events in the Calendar app
-- Web Search:
-  - Search the web using DuckDuckGo
-  - Retrieve and process content from search results
-- Maps:
-  - Search for locations and addresses
-  - Save locations to favorites
-  - Get directions between locations
-  - Drop pins on the map
-  - Create and list guides
-  - Add places to guides
-
-- TODO: Search and open photos in Apple Photos app
-- TODO: Search and open music in Apple Music app
-
-
-You can also daisy-chain commands to create a workflow. Like:
-"can you please read the note about people i met in the conference, find their contacts and emails, and send them a message saying thank you for the time."
-
-(it works!)
-
-
-#### Manual installation
-
-You just need bun, install with `brew install oven-sh/bun/bun`
-
-Now, edit your `claude_desktop_config.json` with this:
-
-```claude_desktop_config.json
-{
-  "mcpServers": {
-    "apple-mcp": {
-      "command": "bunx",
-      "args": ["@dhravya/apple-mcp@latest"]
-    }
   }
 }
 ```
 
-### Usage
+</details>
 
-Now, ask Claude to use the `apple-mcp` tool.
+## 🎬 See It In Action
 
-```
-Can you send a message to John Doe?
-```
+Here's a step-by-step video walkthrough: https://x.com/DhravyaShah/status/1892694077679763671
 
-```
-find all the notes related to AI and send it to my girlfriend
-```
+(Yes, it's actually as cool as it sounds)
+
+## 🎯 Example Commands That'll Blow Your Mind
 
 ```
-create a reminder to "Buy groceries" for tomorrow at 5pm
+"Send a message to mom saying I'll be late for dinner"
 ```
 
-## Local Development
+```
+"Find all my AI research notes and email them to sarah@company.com"
+```
+
+```
+"Create a reminder to call the dentist tomorrow at 2pm"
+```
+
+```
+"Show me my calendar for next week and create an event for coffee with Alex on Friday"
+```
+
+```
+"Find the nearest pizza place and save it to my favorites"
+```
+
+## 🛠️ Local Development (For the Tinkerers)
 
 ```bash
 git clone https://github.com/dhravya/apple-mcp.git
@@ -136,4 +137,8 @@ bun install
 bun run index.ts
 ```
 
-enjoy!
+Now go forth and automate your digital life! 🚀
+
+---
+
+*Made with ❤️ and excessive amounts of caffeine by someone who was tired of clicking through apps manually*
