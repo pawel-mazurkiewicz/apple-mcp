@@ -1,6 +1,6 @@
 # 🍎 Apple MCP - Your Mac's Best Friend
 
-> **Plot twist:** Your Mac can do more than just look pretty. Turn your Apple apps into AI superpowers! 
+> **Plot twist:** Your Mac can do more than just look pretty. Turn your Apple apps into AI superpowers!
 
 Love this MCP? Check out supermemory MCP too - https://mcp.supermemory.ai
 
@@ -15,39 +15,46 @@ Love this MCP? Check out supermemory MCP too - https://mcp.supermemory.ai
 **Basically everything you wish your Mac could do automatically (but never bothered to set up):**
 
 ### 💬 **Messages** - Because who has time to text manually?
+
 - Send messages to anyone in your contacts (even that person you've been avoiding)
 - Read your messages (finally catch up on those group chats)
 - Schedule messages for later (be that organized person you pretend to be)
 
 ### 📝 **Notes** - Your brain's external hard drive
+
 - Create notes faster than you can forget why you needed them
 - Search through that digital mess you call "organized notes"
 - Actually find that brilliant idea you wrote down 3 months ago
 
 ### 👥 **Contacts** - Your personal network, digitized
+
 - Find anyone in your contacts without scrolling forever
 - Get phone numbers instantly (no more "hey, what's your number again?")
 - Actually use that contact database you've been building for years
 
 ### 📧 **Mail** - Email like a pro (or at least pretend to)
+
 - Send emails with attachments, CC, BCC - the whole professional shebang
 - Search through your email chaos with surgical precision
 - Schedule emails for later (because 3 AM ideas shouldn't be sent at 3 AM)
 - Check unread counts (prepare for existential dread)
 
 ### ⏰ **Reminders** - For humans with human memory
+
 - Create reminders with due dates (finally remember to do things)
 - Search through your reminder graveyard
 - List everything you've been putting off
 - Open specific reminders (face your procrastination)
 
 ### 📅 **Calendar** - Time management for the chronically late
+
 - Create events faster than you can double-book yourself
 - Search for that meeting you're definitely forgetting about
 - List upcoming events (spoiler: you're probably late to something)
 - Open calendar events directly (skip the app hunting)
 
 ### 🗺️ **Maps** - For people who still get lost with GPS
+
 - Search locations (find that coffee shop with the weird name)
 - Save favorites (bookmark your life's important spots)
 - Get directions (finally stop asking Siri while driving)
@@ -58,7 +65,7 @@ Love this MCP? Check out supermemory MCP too - https://mcp.supermemory.ai
 
 Here's where it gets spicy. You can literally say:
 
-*"Read my conference notes, find contacts for the people I met, and send them a thank you message"*
+_"Read my conference notes, find contacts for the people I met, and send them a thank you message"_
 
 And it just... **works**. Like actual magic, but with more code.
 
@@ -67,12 +74,13 @@ And it just... **works**. Like actual magic, but with more code.
 ### Option 1: Smithery (For the Sophisticated)
 
 ```bash
-npx -y @smithery/cli@latest install @Dhravya/apple-mcp --client claude
+npx -y install-mcp apple-mcp --client claude
 ```
 
 For Cursor users (we see you):
+
 ```bash
-npx -y @smithery/cli@latest install @Dhravya/apple-mcp --client cursor
+npx -y install-mcp apple-mcp --client cursor
 ```
 
 ### Option 2: Manual Setup (For the Brave)
@@ -81,6 +89,7 @@ npx -y @smithery/cli@latest install @Dhravya/apple-mcp --client cursor
 <summary>Click if you're feeling adventurous</summary>
 
 First, get bun (if you don't have it already):
+
 ```bash
 brew install oven-sh/bun/bun
 ```
@@ -141,4 +150,4 @@ Now go forth and automate your digital life! 🚀
 
 ---
 
-*Made with ❤️ and excessive amounts of caffeine by someone who was tired of clicking through apps manually*
+_Made with ❤️ by supermemory (and honestly, claude code)_

@@ -246,7 +246,7 @@ end tell`;
 					const lastName = nameParts[nameParts.length - 1];
 					return lastName === searchName || lastName.startsWith(searchName);
 				},
-				// Substring match in any word (for cases like "chiku jain")
+				// Substring match in any word
 				(personName: string) => {
 					const cleanedName = cleanName(personName);
 					const words = cleanedName.split(" ");
