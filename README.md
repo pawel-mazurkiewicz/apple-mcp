@@ -4,7 +4,15 @@
 
 Love this MCP? Check out supermemory MCP too - https://mcp.supermemory.ai
 
+
+Click below for one click install with `.dxt`
+
+<a href="https://github.com/supermemoryai/apple-mcp/releases/download/1.0.0/apple-mcp.dxt">
+  <img  width="280" alt="Install with Claude DXT" src="https://github.com/user-attachments/assets/9b0fa2a0-a954-41ee-ac9e-da6e63fc0881" />
+</a>
+
 [![smithery badge](https://smithery.ai/badge/@Dhravya/apple-mcp)](https://smithery.ai/server/@Dhravya/apple-mcp)
+
 
 <a href="https://glama.ai/mcp/servers/gq2qg6kxtu">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/gq2qg6kxtu/badge" alt="Apple Server MCP server" />
