@@ -260,11 +260,12 @@ function initServer() {
 							};
 						}
 					} catch (error) {
+						const errorMessage = error instanceof Error ? error.message : String(error);
 						return {
 							content: [
 								{
 									type: "text",
-									text: `Error accessing contacts: ${error instanceof Error ? error.message : String(error)}`,
+									text: errorMessage.includes("access") ? errorMessage : `Error accessing contacts: ${errorMessage}`,
 								},
 							],
 							isError: true,
@@ -352,11 +353,12 @@ function initServer() {
 								throw new Error(`Unknown operation: ${operation}`);
 						}
 					} catch (error) {
+						const errorMessage = error instanceof Error ? error.message : String(error);
 						return {
 							content: [
 								{
 									type: "text",
-									text: `Error accessing notes: ${error instanceof Error ? error.message : String(error)}`,
+									text: errorMessage.includes("access") ? errorMessage : `Error accessing notes: ${errorMessage}`,
 								},
 							],
 							isError: true,
@@ -491,11 +493,12 @@ function initServer() {
 								throw new Error(`Unknown operation: ${args.operation}`);
 						}
 					} catch (error) {
+						const errorMessage = error instanceof Error ? error.message : String(error);
 						return {
 							content: [
 								{
 									type: "text",
-									text: `Error with messages operation: ${error instanceof Error ? error.message : String(error)}`,
+									text: errorMessage.includes("access") ? errorMessage : `Error with messages operation: ${errorMessage}`,
 								},
 							],
 							isError: true,
@@ -809,11 +812,12 @@ end tell`;
 								throw new Error(`Unknown operation: ${args.operation}`);
 						}
 					} catch (error) {
+						const errorMessage = error instanceof Error ? error.message : String(error);
 						return {
 							content: [
 								{
 									type: "text",
-									text: `Error with mail operation: ${error instanceof Error ? error.message : String(error)}`,
+									text: errorMessage.includes("access") ? errorMessage : `Error with mail operation: ${errorMessage}`,
 								},
 							],
 							isError: true,
@@ -934,11 +938,12 @@ end tell`;
 						};
 					} catch (error) {
 						console.error("Error in reminders tool:", error);
+						const errorMessage = error instanceof Error ? error.message : String(error);
 						return {
 							content: [
 								{
 									type: "text",
-									text: `Error in reminders tool: ${error}`,
+									text: errorMessage.includes("access") ? errorMessage : `Error in reminders tool: ${errorMessage}`,
 								},
 							],
 							isError: true,
@@ -1079,11 +1084,12 @@ end tell`;
 								throw new Error(`Unknown calendar operation: ${operation}`);
 						}
 					} catch (error) {
+						const errorMessage = error instanceof Error ? error.message : String(error);
 						return {
 							content: [
 								{
 									type: "text",
-									text: `Error in calendar tool: ${error instanceof Error ? error.message : String(error)}`,
+									text: errorMessage.includes("access") ? errorMessage : `Error in calendar tool: ${errorMessage}`,
 								},
 							],
 							isError: true,
@@ -1258,11 +1264,12 @@ end tell`;
 								throw new Error(`Unknown maps operation: ${operation}`);
 						}
 					} catch (error) {
+						const errorMessage = error instanceof Error ? error.message : String(error);
 						return {
 							content: [
 								{
 									type: "text",
-									text: `Error in maps tool: ${error instanceof Error ? error.message : String(error)}`,
+									text: errorMessage.includes("access") ? errorMessage : `Error in maps tool: ${errorMessage}`,
 								},
 							],
 							isError: true,

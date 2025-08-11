@@ -26,10 +26,35 @@ end tell`;
 	}
 }
 
+async function requestContactsAccess(): Promise<{ hasAccess: boolean; message: string }> {
+	try {
+		// First check if we already have access
+		const hasAccess = await checkContactsAccess();
+		if (hasAccess) {
+			return {
+				hasAccess: true,
+				message: "Contacts access is already granted."
+			};
+		}
+
+		// If no access, provide clear instructions
+		return {
+			hasAccess: false,
+			message: "Contacts access is required but not granted. Please:\n1. Open System Settings > Privacy & Security > Automation\n2. Find your terminal/app in the list and enable 'Contacts'\n3. Alternatively, open System Settings > Privacy & Security > Contacts\n4. Add your terminal/app to the allowed applications\n5. Restart your terminal and try again"
+		};
+	} catch (error) {
+		return {
+			hasAccess: false,
+			message: `Error checking Contacts access: ${error instanceof Error ? error.message : String(error)}`
+		};
+	}
+}
+
 async function getAllNumbers(): Promise<{ [key: string]: string[] }> {
 	try {
-		if (!(await checkContactsAccess())) {
-			return {};
+		const accessResult = await requestContactsAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		const script = `
@@ -103,8 +128,9 @@ end tell`;
 
 async function findNumber(name: string): Promise<string[]> {
 	try {
-		if (!(await checkContactsAccess())) {
-			return [];
+		const accessResult = await requestContactsAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		if (!name || name.trim() === "") {
@@ -299,8 +325,9 @@ end tell`;
 
 async function findContactByPhone(phoneNumber: string): Promise<string | null> {
 	try {
-		if (!(await checkContactsAccess())) {
-			return null;
+		const accessResult = await requestContactsAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		if (!phoneNumber || phoneNumber.trim() === "") {
@@ -390,4 +417,4 @@ end tell`;
 	}
 }
 
-export default { getAllNumbers, findNumber, findContactByPhone };
+export default { getAllNumbers, findNumber, findContactByPhone, requestContactsAccess };

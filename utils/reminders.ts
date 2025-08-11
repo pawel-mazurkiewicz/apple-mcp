@@ -51,13 +51,41 @@ end tell`;
 }
 
 /**
+ * Request Reminders app access and provide instructions if not available
+ */
+async function requestRemindersAccess(): Promise<{ hasAccess: boolean; message: string }> {
+	try {
+		// First check if we already have access
+		const hasAccess = await checkRemindersAccess();
+		if (hasAccess) {
+			return {
+				hasAccess: true,
+				message: "Reminders access is already granted."
+			};
+		}
+
+		// If no access, provide clear instructions
+		return {
+			hasAccess: false,
+			message: "Reminders access is required but not granted. Please:\n1. Open System Settings > Privacy & Security > Automation\n2. Find your terminal/app in the list and enable 'Reminders'\n3. Restart your terminal and try again\n4. If the option is not available, run this command again to trigger the permission dialog"
+		};
+	} catch (error) {
+		return {
+			hasAccess: false,
+			message: `Error checking Reminders access: ${error instanceof Error ? error.message : String(error)}`
+		};
+	}
+}
+
+/**
  * Get all reminder lists (limited for performance)
  * @returns Array of reminder lists with their names and IDs
  */
 async function getAllLists(): Promise<ReminderList[]> {
 	try {
-		if (!(await checkRemindersAccess())) {
-			return [];
+		const accessResult = await requestRemindersAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		const script = `
@@ -111,8 +139,9 @@ end tell`;
  */
 async function getAllReminders(listName?: string): Promise<Reminder[]> {
 	try {
-		if (!(await checkRemindersAccess())) {
-			return [];
+		const accessResult = await requestRemindersAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		const script = `
@@ -154,8 +183,9 @@ end tell`;
  */
 async function searchReminders(searchText: string): Promise<Reminder[]> {
 	try {
-		if (!(await checkRemindersAccess())) {
-			return [];
+		const accessResult = await requestRemindersAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		if (!searchText || searchText.trim() === "") {
@@ -201,8 +231,9 @@ async function createReminder(
 	dueDate?: string,
 ): Promise<Reminder> {
 	try {
-		if (!(await checkRemindersAccess())) {
-			throw new Error("Cannot access Reminders app");
+		const accessResult = await requestRemindersAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		// Validate inputs
@@ -270,8 +301,9 @@ interface OpenReminderResult {
  */
 async function openReminder(searchText: string): Promise<OpenReminderResult> {
 	try {
-		if (!(await checkRemindersAccess())) {
-			return { success: false, message: "Cannot access Reminders app" };
+		const accessResult = await requestRemindersAccess();
+		if (!accessResult.hasAccess) {
+			return { success: false, message: accessResult.message };
 		}
 
 		// First search for the reminder
@@ -318,8 +350,9 @@ async function getRemindersFromListById(
 	props?: string[],
 ): Promise<any[]> {
 	try {
-		if (!(await checkRemindersAccess())) {
-			return [];
+		const accessResult = await requestRemindersAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		const script = `
@@ -353,4 +386,5 @@ export default {
 	createReminder,
 	openReminder,
 	getRemindersFromListById,
+	requestRemindersAccess,
 };

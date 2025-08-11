@@ -46,12 +46,40 @@ end tell`;
 }
 
 /**
+ * Request Notes app access and provide instructions if not available
+ */
+async function requestNotesAccess(): Promise<{ hasAccess: boolean; message: string }> {
+	try {
+		// First check if we already have access
+		const hasAccess = await checkNotesAccess();
+		if (hasAccess) {
+			return {
+				hasAccess: true,
+				message: "Notes access is already granted."
+			};
+		}
+
+		// If no access, provide clear instructions
+		return {
+			hasAccess: false,
+			message: "Notes access is required but not granted. Please:\n1. Open System Settings > Privacy & Security > Automation\n2. Find your terminal/app in the list and enable 'Notes'\n3. Restart your terminal and try again\n4. If the option is not available, run this command again to trigger the permission dialog"
+		};
+	} catch (error) {
+		return {
+			hasAccess: false,
+			message: `Error checking Notes access: ${error instanceof Error ? error.message : String(error)}`
+		};
+	}
+}
+
+/**
  * Get all notes from Notes app (limited for performance)
  */
 async function getAllNotes(): Promise<Note[]> {
 	try {
-		if (!(await checkNotesAccess())) {
-			return [];
+		const accessResult = await requestNotesAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		const script = `
@@ -111,8 +139,9 @@ end tell`;
  */
 async function findNote(searchText: string): Promise<Note[]> {
 	try {
-		if (!(await checkNotesAccess())) {
-			return [];
+		const accessResult = await requestNotesAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		if (!searchText || searchText.trim() === "") {
@@ -186,11 +215,11 @@ async function createNote(
 	folderName: string = "Claude",
 ): Promise<CreateNoteResult> {
 	try {
-		if (!(await checkNotesAccess())) {
+		const accessResult = await requestNotesAccess();
+		if (!accessResult.hasAccess) {
 			return {
 				success: false,
-				message:
-					"Cannot access Notes app. Please grant access in System Settings > Privacy & Security > Automation.",
+				message: accessResult.message,
 			};
 		}
 
@@ -313,10 +342,11 @@ async function getNotesFromFolder(
 	folderName: string,
 ): Promise<{ success: boolean; notes?: Note[]; message?: string }> {
 	try {
-		if (!(await checkNotesAccess())) {
+		const accessResult = await requestNotesAccess();
+		if (!accessResult.hasAccess) {
 			return {
 				success: false,
-				message: "Cannot access Notes app",
+				message: accessResult.message,
 			};
 		}
 
@@ -467,4 +497,5 @@ export default {
 	getNotesFromFolder,
 	getRecentNotesFromFolder,
 	getNotesByDateRange,
+	requestNotesAccess,
 };

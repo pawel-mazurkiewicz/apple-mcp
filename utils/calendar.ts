@@ -40,6 +40,33 @@ end tell`;
 }
 
 /**
+ * Request Calendar app access and provide instructions if not available
+ */
+async function requestCalendarAccess(): Promise<{ hasAccess: boolean; message: string }> {
+    try {
+        // First check if we already have access
+        const hasAccess = await checkCalendarAccess();
+        if (hasAccess) {
+            return {
+                hasAccess: true,
+                message: "Calendar access is already granted."
+            };
+        }
+
+        // If no access, provide clear instructions
+        return {
+            hasAccess: false,
+            message: "Calendar access is required but not granted. Please:\n1. Open System Settings > Privacy & Security > Automation\n2. Find your terminal/app in the list and enable 'Calendar'\n3. Alternatively, open System Settings > Privacy & Security > Calendars\n4. Add your terminal/app to the allowed applications\n5. Restart your terminal and try again"
+        };
+    } catch (error) {
+        return {
+            hasAccess: false,
+            message: `Error checking Calendar access: ${error instanceof Error ? error.message : String(error)}`
+        };
+    }
+}
+
+/**
  * Get calendar events in a specified date range
  * @param limit Optional limit on the number of results (default 10)
  * @param fromDate Optional start date for search range in ISO format (default: today)
@@ -53,9 +80,9 @@ async function getEvents(
     try {
         console.error("getEvents - Starting to fetch calendar events");
         
-        if (!await checkCalendarAccess()) {
-            console.error("getEvents - Failed to access Calendar app");
-            return [];
+        const accessResult = await requestCalendarAccess();
+        if (!accessResult.hasAccess) {
+            throw new Error(accessResult.message);
         }
         console.error("getEvents - Calendar access check passed");
 
@@ -128,8 +155,9 @@ async function searchEvents(
     toDate?: string
 ): Promise<CalendarEvent[]> {
     try {
-        if (!await checkCalendarAccess()) {
-            return [];
+        const accessResult = await requestCalendarAccess();
+        if (!accessResult.hasAccess) {
+            throw new Error(accessResult.message);
         }
 
         console.error(`searchEvents - Processing calendars for search: "${searchText}"`);
@@ -193,10 +221,11 @@ async function createEvent(
     calendarName?: string
 ): Promise<{ success: boolean; message: string; eventId?: string }> {
     try {
-        if (!await checkCalendarAccess()) {
+        const accessResult = await requestCalendarAccess();
+        if (!accessResult.hasAccess) {
             return {
                 success: false,
-                message: "Cannot access Calendar app. Please grant access in System Settings > Privacy & Security > Automation."
+                message: accessResult.message
             };
         }
 
@@ -287,10 +316,11 @@ end tell`;
  */
 async function openEvent(eventId: string): Promise<{ success: boolean; message: string }> {
     try {
-        if (!await checkCalendarAccess()) {
+        const accessResult = await requestCalendarAccess();
+        if (!accessResult.hasAccess) {
             return {
                 success: false,
-                message: "Cannot access Calendar app. Please grant access in System Settings > Privacy & Security > Automation."
+                message: accessResult.message
             };
         }
 
@@ -328,7 +358,8 @@ const calendar = {
     searchEvents,
     openEvent,
     getEvents,
-    createEvent
+    createEvent,
+    requestCalendarAccess
 };
 
 export default calendar;

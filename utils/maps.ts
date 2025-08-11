@@ -76,17 +76,45 @@ async function checkMapsAccess(): Promise<boolean> {
 }
 
 /**
+ * Request Maps app access and provide instructions if not available
+ */
+async function requestMapsAccess(): Promise<{ hasAccess: boolean; message: string }> {
+    try {
+        // First check if we already have access
+        const hasAccess = await checkMapsAccess();
+        if (hasAccess) {
+            return {
+                hasAccess: true,
+                message: "Maps access is already granted."
+            };
+        }
+
+        // If no access, provide clear instructions
+        return {
+            hasAccess: false,
+            message: "Maps access is required but not granted. Please:\n1. Open System Settings > Privacy & Security > Automation\n2. Find your terminal/app in the list and enable 'Maps'\n3. Make sure Maps app is installed and available\n4. Restart your terminal and try again"
+        };
+    } catch (error) {
+        return {
+            hasAccess: false,
+            message: `Error checking Maps access: ${error instanceof Error ? error.message : String(error)}`
+        };
+    }
+}
+
+/**
  * Search for locations on the map
  * @param query Search query for locations
  * @param limit Maximum number of results to return
  */
 async function searchLocations(query: string, limit: number = 5): Promise<SearchResult> {
     try {
-        if (!await checkMapsAccess()) {
+        const accessResult = await requestMapsAccess();
+        if (!accessResult.hasAccess) {
             return {
                 success: false,
                 locations: [],
-                message: "Cannot access Maps app. Please grant access in System Settings > Privacy & Security > Automation."
+                message: accessResult.message
             };
         }
 
@@ -196,10 +224,11 @@ async function searchLocations(query: string, limit: number = 5): Promise<Search
  */
 async function saveLocation(name: string, address: string): Promise<SaveResult> {
     try {
-        if (!await checkMapsAccess()) {
+        const accessResult = await requestMapsAccess();
+        if (!accessResult.hasAccess) {
             return {
                 success: false,
-                message: "Cannot access Maps app. Please grant access in System Settings > Privacy & Security > Automation."
+                message: accessResult.message
             };
         }
 
@@ -305,10 +334,11 @@ async function getDirections(
     transportType: 'driving' | 'walking' | 'transit' = 'driving'
 ): Promise<DirectionResult> {
     try {
-        if (!await checkMapsAccess()) {
+        const accessResult = await requestMapsAccess();
+        if (!accessResult.hasAccess) {
             return {
                 success: false,
-                message: "Cannot access Maps app. Please grant access in System Settings > Privacy & Security > Automation."
+                message: accessResult.message
             };
         }
 
@@ -386,10 +416,11 @@ async function getDirections(
  */
 async function dropPin(name: string, address: string): Promise<SaveResult> {
     try {
-        if (!await checkMapsAccess()) {
+        const accessResult = await requestMapsAccess();
+        if (!accessResult.hasAccess) {
             return {
                 success: false,
-                message: "Cannot access Maps app. Please grant access in System Settings > Privacy & Security > Automation."
+                message: accessResult.message
             };
         }
 
@@ -435,10 +466,11 @@ async function dropPin(name: string, address: string): Promise<SaveResult> {
  */
 async function listGuides(): Promise<GuideResult> {
     try {
-        if (!await checkMapsAccess()) {
+        const accessResult = await requestMapsAccess();
+        if (!accessResult.hasAccess) {
             return {
                 success: false,
-                message: "Cannot access Maps app. Please grant access in System Settings > Privacy & Security > Automation."
+                message: accessResult.message
             };
         }
 
@@ -491,10 +523,11 @@ async function listGuides(): Promise<GuideResult> {
  */
 async function addToGuide(locationAddress: string, guideName: string): Promise<AddToGuideResult> {
     try {
-        if (!await checkMapsAccess()) {
+        const accessResult = await requestMapsAccess();
+        if (!accessResult.hasAccess) {
             return {
                 success: false,
-                message: "Cannot access Maps app. Please grant access in System Settings > Privacy & Security > Automation."
+                message: accessResult.message
             };
         }
 
@@ -571,10 +604,11 @@ async function addToGuide(locationAddress: string, guideName: string): Promise<A
  */
 async function createGuide(guideName: string): Promise<AddToGuideResult> {
     try {
-        if (!await checkMapsAccess()) {
+        const accessResult = await requestMapsAccess();
+        if (!accessResult.hasAccess) {
             return {
                 success: false,
-                message: "Cannot access Maps app. Please grant access in System Settings > Privacy & Security > Automation."
+                message: accessResult.message
             };
         }
 
@@ -634,7 +668,8 @@ const maps = {
     dropPin,
     listGuides,
     addToGuide,
-    createGuide
+    createGuide,
+    requestMapsAccess
 };
 
 export default maps;

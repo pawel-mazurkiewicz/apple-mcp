@@ -40,12 +40,40 @@ end tell`;
 }
 
 /**
+ * Request Mail app access and provide instructions if not available
+ */
+async function requestMailAccess(): Promise<{ hasAccess: boolean; message: string }> {
+	try {
+		// First check if we already have access
+		const hasAccess = await checkMailAccess();
+		if (hasAccess) {
+			return {
+				hasAccess: true,
+				message: "Mail access is already granted."
+			};
+		}
+
+		// If no access, provide clear instructions
+		return {
+			hasAccess: false,
+			message: "Mail access is required but not granted. Please:\n1. Open System Settings > Privacy & Security > Automation\n2. Find your terminal/app in the list and enable 'Mail'\n3. Make sure Mail app is running and configured with at least one account\n4. Restart your terminal and try again"
+		};
+	} catch (error) {
+		return {
+			hasAccess: false,
+			message: `Error checking Mail access: ${error instanceof Error ? error.message : String(error)}`
+		};
+	}
+}
+
+/**
  * Get unread emails from Mail app (limited for performance)
  */
 async function getUnreadMails(limit = 10): Promise<EmailMessage[]> {
 	try {
-		if (!(await checkMailAccess())) {
-			return [];
+		const accessResult = await requestMailAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		const maxEmails = Math.min(limit, CONFIG.MAX_EMAILS);
@@ -135,8 +163,9 @@ async function searchMails(
 	limit = 10,
 ): Promise<EmailMessage[]> {
 	try {
-		if (!(await checkMailAccess())) {
-			return [];
+		const accessResult = await requestMailAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		if (!searchTerm || searchTerm.trim() === "") {
@@ -236,10 +265,9 @@ async function sendMail(
 	bcc?: string,
 ): Promise<string | undefined> {
 	try {
-		if (!(await checkMailAccess())) {
-			throw new Error(
-				"Cannot access Mail app. Please make sure Mail is running and configured.",
-			);
+		const accessResult = await requestMailAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		// Validate inputs
@@ -309,8 +337,9 @@ end tell`;
  */
 async function getMailboxes(): Promise<string[]> {
 	try {
-		if (!(await checkMailAccess())) {
-			return [];
+		const accessResult = await requestMailAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		const script = `
@@ -348,8 +377,9 @@ end tell`;
  */
 async function getAccounts(): Promise<string[]> {
 	try {
-		if (!(await checkMailAccess())) {
-			return [];
+		const accessResult = await requestMailAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		const script = `
@@ -387,8 +417,9 @@ end tell`;
  */
 async function getMailboxesForAccount(accountName: string): Promise<string[]> {
 	try {
-		if (!(await checkMailAccess())) {
-			return [];
+		const accessResult = await requestMailAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		if (!accountName || !accountName.trim()) {
@@ -444,8 +475,9 @@ async function getLatestMails(
 	limit = 5,
 ): Promise<EmailMessage[]> {
 	try {
-		if (!(await checkMailAccess())) {
-			return [];
+		const accessResult = await requestMailAccess();
+		if (!accessResult.hasAccess) {
+			throw new Error(accessResult.message);
 		}
 
 		const script = `
@@ -557,4 +589,5 @@ export default {
 	getAccounts,
 	getMailboxesForAccount,
 	getLatestMails,
+	requestMailAccess,
 };

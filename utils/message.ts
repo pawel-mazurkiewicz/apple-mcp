@@ -115,6 +115,41 @@ Error details: ${error instanceof Error ? error.message : String(error)}
     }
 }
 
+/**
+ * Request Messages access and provide instructions if not available
+ */
+async function requestMessagesAccess(): Promise<{ hasAccess: boolean; message: string }> {
+    try {
+        // Check database access first
+        const hasDBAccess = await checkMessagesDBAccess();
+        if (hasDBAccess) {
+            return {
+                hasAccess: true,
+                message: "Messages access is already granted."
+            };
+        }
+
+        // If no database access, check if Messages app is at least accessible
+        try {
+            await runAppleScript('tell application "Messages" to return name');
+            return {
+                hasAccess: false,
+                message: "Messages app is accessible but database access is required. Please:\n1. Open System Settings > Privacy & Security > Full Disk Access\n2. Add your terminal application (Terminal.app or iTerm.app)\n3. Restart your terminal and try again\n4. Note: This is required to read message history from the Messages database"
+            };
+        } catch (error) {
+            return {
+                hasAccess: false,
+                message: "Messages access is required but not granted. Please:\n1. Open System Settings > Privacy & Security > Automation\n2. Find your terminal/app and enable 'Messages'\n3. Also grant Full Disk Access in Privacy & Security > Full Disk Access\n4. Restart your terminal and try again"
+            };
+        }
+    } catch (error) {
+        return {
+            hasAccess: false,
+            message: `Error checking Messages access: ${error instanceof Error ? error.message : String(error)}`
+        };
+    }
+}
+
 function decodeAttributedBody(hexString: string): { text: string; url?: string } {
     try {
         // Convert hex to buffer
@@ -225,11 +260,10 @@ async function readMessages(phoneNumber: string, limit = 10): Promise<Message[]>
         // Enforce maximum limit for performance
         const maxLimit = Math.min(limit, CONFIG.MAX_MESSAGES);
         
-        // Check database access with retries
-        const hasAccess = await retryOperation(checkMessagesDBAccess);
-        if (!hasAccess) {
-            // If database access fails, try AppleScript fallback (limited functionality)
-            return await readMessagesAppleScript(phoneNumber, maxLimit);
+        // Check access and get instructions if needed
+        const accessResult = await requestMessagesAccess();
+        if (!accessResult.hasAccess) {
+            throw new Error(accessResult.message);
         }
 
         // Get all possible formats of the phone number
@@ -359,11 +393,10 @@ async function getUnreadMessages(limit = 10): Promise<Message[]> {
         // Enforce maximum limit for performance
         const maxLimit = Math.min(limit, CONFIG.MAX_MESSAGES);
         
-        // Check database access with retries
-        const hasAccess = await retryOperation(checkMessagesDBAccess);
-        if (!hasAccess) {
-            // If database access fails, try AppleScript fallback (limited functionality)
-            return await getUnreadMessagesAppleScript(maxLimit);
+        // Check access and get instructions if needed
+        const accessResult = await requestMessagesAccess();
+        if (!accessResult.hasAccess) {
+            throw new Error(accessResult.message);
         }
 
         const query = `
@@ -566,4 +599,4 @@ end tell`;
     }
 }
 
-export default { sendMessage, readMessages, scheduleMessage, getUnreadMessages };
+export default { sendMessage, readMessages, scheduleMessage, getUnreadMessages, requestMessagesAccess };
