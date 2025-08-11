@@ -1,4 +1,4 @@
-# 🍎 Apple MCP - Your Mac's Best Friend
+# 🍎 Apple MCP - Better Siri that can do it all :)
 
 > **Plot twist:** Your Mac can do more than just look pretty. Turn your Apple apps into AI superpowers!
 
